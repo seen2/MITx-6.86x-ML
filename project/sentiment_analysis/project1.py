@@ -39,6 +39,8 @@ def hinge_loss_single(feature_vector, label, theta, theta_0):
         parameters.
     """
     # Your code here
+    test=(np.dot(feature_vector,theta)+theta_0)*label
+    return (1-test) if test<1 else 0
     raise NotImplementedError
 
 
@@ -61,6 +63,12 @@ def hinge_loss_full(feature_matrix, labels, theta, theta_0):
     """
 
     # Your code here
+    # hinge_loss_single
+    loss=0
+    n=len(feature_matrix)
+    for i in range(n):
+        loss+=hinge_loss_single(feature_matrix[i],labels[i],theta=theta,theta_0=theta_0)
+    return loss/n
     raise NotImplementedError
 
 
