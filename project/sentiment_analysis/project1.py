@@ -137,7 +137,7 @@ def perceptron(feature_matrix, labels, T):
             # Your code here
             # print(i,feature_matrix,labels[i],theeta,theeta_0)
             theeta,theeta_0=perceptron_single_step_update(feature_matrix[i],labels[i],theeta,theeta_0)
-        print("PERCEPTRON",theeta)
+        # print("PERCEPTRON",theeta)
     # Your code here
     return (theeta,theeta_0)
     # raise NotImplementedError
@@ -182,7 +182,7 @@ def average_perceptron(feature_matrix, labels, T):
             theeta=theeta+th
             theeta_0=theeta_0+th_0
     # Your code here
-        print("AVG",theeta)
+        # print("AVG",theeta)
     theeta=theeta/(nsamples*T)
     theeta_0=theeta_0/(nsamples*T)
     return (theeta,theeta_0)
@@ -264,7 +264,7 @@ def pegasos(feature_matrix, labels, T, L):
             eta=1/(nt)**0.5
             nt+=1
             theeta,theeta_0=pegasos_single_step_update(feature_matrix[i],labels[i],L,eta,theeta,theeta_0)
-        print("PEGASOS",theeta)
+        # print("PEGASOS",theeta)
     # Your code here
     return (theeta,theeta_0)
     raise NotImplementedError
@@ -304,6 +304,14 @@ def classify(feature_matrix, theta, theta_0):
         should be considered a positive classification.
     """
     # Your code here
+    labels=np.array([]);
+    for feature_vector in feature_matrix:
+        test=np.dot(feature_vector,theta)+theta_0
+        if test<=0:
+            labels=np.append(labels,-1)
+        else:
+            labels=np.append(labels,1)
+    return labels
     raise NotImplementedError
 
 
@@ -341,6 +349,12 @@ def classifier_accuracy(
         accuracy of the trained classifier on the validation data.
     """
     # Your code here
+    theta,theta_0=classifier(train_feature_matrix,train_labels,**kwargs)
+    result_train_labels=classify(train_feature_matrix,theta,theta_0)
+    result_val_labels=classify(val_feature_matrix,theta,theta_0)
+    accuracy_res_val=accuracy(result_val_labels,val_labels)
+    accuracy_res_train=accuracy(result_train_labels,train_labels)
+    return (accuracy_res_train,accuracy_res_val)
     raise NotImplementedError
 
 
@@ -413,9 +427,16 @@ def extract_bow_feature_vectors(reviews, indices_by_word, binarize=True):
         for word in word_list:
             if word not in indices_by_word: continue
             feature_matrix[i, indices_by_word[word]] += 1
-    # if binarize:
-    #     # Your code here
+    if binarize:
+        binarize_feature_matrix=[];
+        for feature_vecotr in feature_matrix:
+            binarize_feature_vector=np.array([0 if i<1 else 1 for i in feature_vecotr])
+            # print(binarize_feature_vector)
+            binarize_feature_matrix.append(binarize_feature_vector)
+        # pass
     #     raise NotImplementedError
+    feature_matrix=np.array(binarize_feature_matrix)
+    # print(binarize_feature_matrix)
     return feature_matrix
 
 
