@@ -1,7 +1,7 @@
 from string import punctuation, digits
 import numpy as np
 import random
-
+import utils
 
 
 #==============================================================================
@@ -377,7 +377,7 @@ def extract_words(text):
 
 
 
-def bag_of_words(texts, remove_stopword=False):
+def bag_of_words(texts, remove_stopword=True):
     """
     NOTE: feel free to change this code as guided by Section 3 (e.g. remove
     stopwords, add bigrams etc.)
@@ -392,6 +392,11 @@ def bag_of_words(texts, remove_stopword=False):
     # raise NotImplementedError
     
     indices_by_word = {}  # maps word to unique index
+    stopword = []
+    stopword_file = open('stopwords.txt','r')
+    stopword_data=stopword_file.read()
+    stopword_file.close()
+    # print(stopword_data.split("\n"))
     for text in texts:
         word_list = extract_words(text)
         if remove_stopword == False:
@@ -400,12 +405,12 @@ def bag_of_words(texts, remove_stopword=False):
             pass
             ##### Something you need to implement for Part 9
             ##### Define what stopword is
-        
+            stopword=stopword_data.split("\n")
         for word in word_list:
             if word in indices_by_word: continue
             if word in stopword: continue
             indices_by_word[word] = len(indices_by_word)
-
+    # print(stopword)
     return indices_by_word
 
 
@@ -430,7 +435,7 @@ def extract_bow_feature_vectors(reviews, indices_by_word, binarize=True):
     if binarize:
         binarize_feature_matrix=[];
         for feature_vecotr in feature_matrix:
-            binarize_feature_vector=np.array([0 if i<1 else 1 for i in feature_vecotr])
+            binarize_feature_vector=np.array([i for i in feature_vecotr])
             # print(binarize_feature_vector)
             binarize_feature_matrix.append(binarize_feature_vector)
         # pass
