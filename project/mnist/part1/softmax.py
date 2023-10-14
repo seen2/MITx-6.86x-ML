@@ -32,6 +32,15 @@ def compute_probabilities(X, theta, temp_parameter):
         H - (k, n) NumPy array, where each entry H[j][i] is the probability that X[i] is labeled as j
     """
     #YOUR CODE HERE
+    hx=[]
+    # print(theta.shape,X.shape)
+    result=np.matmul(theta,np.transpose(X))
+    for row in np.transpose(result):
+        c=max(row)
+        sample_space=[np.exp((e-c)/temp_parameter) for e in row]
+        total=sum(sample_space)
+        hx.append(np.array(sample_space)/total)
+    return np.transpose(hx)
     raise NotImplementedError
 
 def compute_cost_function(X, Y, theta, lambda_factor, temp_parameter):
@@ -51,6 +60,21 @@ def compute_cost_function(X, Y, theta, lambda_factor, temp_parameter):
         c - the cost value (scalar)
     """
     #YOUR CODE HERE
+    result=np.transpose(compute_probabilities(X,theta,temp_parameter))
+    term_first=0
+    term_sec=0
+    for i in range(result.shape[0]):
+        for j in range(result[i].shape[0]):
+            if Y[i]==j:
+                term_first+=np.log(result[i][j])
+            # else:
+                # term_first-=np.log(result[i][j])
+    for row in theta:
+        for el in row:
+            term_sec+=(el**2)
+    term_sec=lambda_factor*term_sec/2
+    result=-term_first/result.shape[0]+term_sec
+    return result
     raise NotImplementedError
 
 def run_gradient_descent_iteration(X, Y, theta, alpha, lambda_factor, temp_parameter):
@@ -71,6 +95,22 @@ def run_gradient_descent_iteration(X, Y, theta, alpha, lambda_factor, temp_param
         theta - (k, d) NumPy array that is the final value of parameters theta
     """
     #YOUR CODE HERE
+    while True:
+        theta_prev=theta
+        first_term=np.zeros(theta.shape)
+        for i in range(X.shape[0]):
+            xi=np.array([X[i]])
+            result=compute_probabilities(xi,np.array([theta[i]]),temp_parameter)
+            print(result)
+            ones=np.transpose(np.array([[1 if Y[i]==j else 0 for j in range(theta.shape[0])]]))
+            first_term_truth=ones-result
+            first_term=first_term+np.matmul(first_term_truth,xi)
+        gradient=lambda_factor*theta-first_term/(temp_parameter*X.shape[0])
+        theta=theta-alpha*gradient
+        if np.allclose(theta,theta_prev):
+            break
+
+    return theta
     raise NotImplementedError
 
 def update_y(train_y, test_y):
