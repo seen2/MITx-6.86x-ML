@@ -40,7 +40,9 @@ def compute_probabilities(X, theta, temp_parameter):
         sample_space=[np.exp((e-c)/temp_parameter) for e in row]
         total=sum(sample_space)
         hx.append(np.array(sample_space)/total)
-    return np.transpose(hx)
+    hx=np.transpose(hx)
+    # print(X,theta,hx)
+    return hx
     raise NotImplementedError
 
 def compute_cost_function(X, Y, theta, lambda_factor, temp_parameter):
@@ -95,20 +97,26 @@ def run_gradient_descent_iteration(X, Y, theta, alpha, lambda_factor, temp_param
         theta - (k, d) NumPy array that is the final value of parameters theta
     """
     #YOUR CODE HERE
+    I=0
     while True:
-        theta_prev=theta
+        print(theta,I)
         first_term=np.zeros(theta.shape)
         for i in range(X.shape[0]):
             xi=np.array([X[i]])
             result=compute_probabilities(xi,np.array([theta[i]]),temp_parameter)
-            print(result)
+            print(i,I,result)
             ones=np.transpose(np.array([[1 if Y[i]==j else 0 for j in range(theta.shape[0])]]))
             first_term_truth=ones-result
             first_term=first_term+np.matmul(first_term_truth,xi)
         gradient=lambda_factor*theta-first_term/(temp_parameter*X.shape[0])
-        theta=theta-alpha*gradient
-        if np.allclose(theta,theta_prev):
+        
+        if (gradient==0).all():
+            # print(gradient)
             break
+        else:
+            theta=theta-alpha*gradient
+        I+=1
+
 
     return theta
     raise NotImplementedError
