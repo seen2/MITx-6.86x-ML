@@ -103,7 +103,7 @@ def run_gradient_descent_iteration(X, Y, theta, alpha, lambda_factor, temp_param
         first_term=np.zeros(theta.shape)
         for i in range(X.shape[0]):
             xi=np.array([X[i]])
-            result=compute_probabilities(xi,np.array([theta[i]]),temp_parameter)
+            result=compute_probabilities(X,theta,temp_parameter)
             print(i,I,result)
             ones=np.transpose(np.array([[1 if Y[i]==j else 0 for j in range(theta.shape[0])]]))
             first_term_truth=ones-result
