@@ -97,27 +97,14 @@ def run_gradient_descent_iteration(X, Y, theta, alpha, lambda_factor, temp_param
         theta - (k, d) NumPy array that is the final value of parameters theta
     """
     #YOUR CODE HERE
-    I=0
-    while True:
-        print(theta,I)
-        first_term=np.zeros(theta.shape)
-        for i in range(X.shape[0]):
-            xi=np.array([X[i]])
-            result=compute_probabilities(X,theta,temp_parameter)
-            print(i,I,result)
-            ones=np.transpose(np.array([[1 if Y[i]==j else 0 for j in range(theta.shape[0])]]))
-            first_term_truth=ones-result
-            first_term=first_term+np.matmul(first_term_truth,xi)
-        gradient=lambda_factor*theta-first_term/(temp_parameter*X.shape[0])
-        
-        if (gradient==0).all():
-            # print(gradient)
-            break
-        else:
-            theta=theta-alpha*gradient
-        I+=1
-
-
+    probabilities = compute_probabilities(X, theta, temp_parameter)
+    one_hot = sparse.coo_matrix(([1]*Y.shape[0], (Y,range(Y.shape[0]))), shape=probabilities.shape).toarray()
+    # print(one_hot)
+    # one_hot = np.array([[1 if Y[j] == i else 0 for j in range(Y.shape[0])] for i in range(theta.shape[0])])
+    # print(one_hot)
+    first_term=np.dot((one_hot-probabilities),X)
+    gradient=-first_term/(temp_parameter*X.shape[0])+lambda_factor*theta
+    theta=theta-alpha*gradient
     return theta
     raise NotImplementedError
 
@@ -139,6 +126,9 @@ def update_y(train_y, test_y):
                     for each datapoint in the test set
     """
     #YOUR CODE HERE
+    train_y_mod3=np.vectorize(lambda x:(x%3))(train_y)
+    test_y_mod3=np.vectorize(lambda x:(x%3))(test_y)
+    return (train_y_mod3,test_y_mod3)
     raise NotImplementedError
 
 def compute_test_error_mod3(X, Y, theta, temp_parameter):
@@ -157,6 +147,9 @@ def compute_test_error_mod3(X, Y, theta, temp_parameter):
         test_error - the error rate of the classifier (scalar)
     """
     #YOUR CODE HERE
+    assigned_labels = get_classification(X, theta, temp_parameter)
+    assigned_labels=np.vectorize(lambda x:(x%3))(assigned_labels)
+    return 1 - np.mean(assigned_labels == Y)
     raise NotImplementedError
 
 def softmax_regression(X, Y, temp_parameter, alpha, lambda_factor, k, num_iterations):
