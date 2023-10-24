@@ -1,4 +1,5 @@
 import numpy as np
+from sympy import symbols, expand
 
 ### Functions for you to fill in ###
 
@@ -20,6 +21,9 @@ def polynomial_kernel(X, Y, c, p):
             kernel_matrix - (n, m) Numpy array containing the kernel matrix
     """
     # YOUR CODE HERE
+    xT_y=np.matmul(X,Y.transpose())
+    result=(xT_y+c)**p
+    return result
     raise NotImplementedError
 
 
@@ -39,4 +43,7 @@ def rbf_kernel(X, Y, gamma):
             kernel_matrix - (n, m) Numpy array containing the kernel matrix
     """
     # YOUR CODE HERE
+    K_x_y=np.array([[np.exp(-gamma*np.linalg.norm(x-y)**2) for y in Y] for x in X])
+    print(K_x_y)
+    return K_x_y
     raise NotImplementedError
